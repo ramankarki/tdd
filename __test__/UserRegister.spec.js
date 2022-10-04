@@ -11,11 +11,15 @@ beforeEach(() => {
   return User.destroy({ truncate: true })
 })
 
-const createUser = () =>
+const createUser = (
+  username = 'username',
+  email = 'user@gmail.com',
+  password = 'password'
+) =>
   request(app).post('/api/1.0/users').send({
-    username: 'username',
-    email: 'user@gmail.com',
-    password: 'password',
+    username,
+    email,
+    password,
   })
 
 describe('User registration', () => {
@@ -47,4 +51,12 @@ describe('User registration', () => {
     const users = await User.findAll()
     expect(users[0].password).not.toBe('password')
   })
+
+  it('Returns 400 when username is null.', async () => {
+    const res = await createUser(' ')
+    expect(res.status).toBe(400)
+  })
+
+  // it.each()
+  // https://jestjs.io/docs/api#describeeachtablename-fn-timeout
 })
